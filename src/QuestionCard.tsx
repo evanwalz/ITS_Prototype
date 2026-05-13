@@ -48,6 +48,8 @@ export default function QuestionCard({ question, questionNumber, total, onAnswer
     />
   ));
 
+  /* i recieved some help from AI in this return because I was a little stuck on how to 
+  do the question cards */
   return (
     <div className="question-card">
       <div className="question-meta">
