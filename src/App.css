@@ -15,7 +15,7 @@ body {
   min-height: 100vh;
 }
 
-/* Sidebar */
+/* sidebar */
 .sidebar {
   width: 240px;
   background: #2c3e50;
@@ -37,7 +37,7 @@ body {
   margin-top: 12px;
 }
 
-/* Mastery bars */
+/* mastery bars */
 .mastery-panel h3 {
   font-size: 0.85rem;
   color: #aaa;
@@ -79,7 +79,7 @@ body {
   color: #aaa;
 }
 
-/* Main content */
+/* main content */
 .main-content {
   flex: 1;
   padding: 30px;
@@ -87,7 +87,7 @@ body {
   justify-content: center;
 }
 
-/* Question card */
+/* question card */
 .question-card {
   background: white;
   border-radius: 8px;
@@ -143,7 +143,7 @@ body {
   margin-bottom: 16px;
 }
 
-/* Code block */
+/* code block */
 .code-block {
   background: #1e1e1e;
   color: #dcdcdc;
@@ -157,7 +157,7 @@ body {
   white-space: pre;
 }
 
-/* Options */
+/* options */
 .options {
   display: flex;
   flex-direction: column;
@@ -197,7 +197,7 @@ body {
   color: #a93226;
 }
 
-/* Hints */
+/* hints */
 .hints {
   margin-bottom: 14px;
   display: flex;
@@ -214,7 +214,7 @@ body {
   color: #7d6608;
 }
 
-/* Feedback */
+/* feedback */
 .feedback {
   padding: 14px;
   border-radius: 6px;
@@ -240,7 +240,7 @@ body {
   font-size: 0.8rem;
 }
 
-/* Buttons */
+/* buttons */
 .btn-primary {
   background: #1a56db;
   color: white;
@@ -284,7 +284,7 @@ body {
   font-size: 1rem;
 }
 
-/* Intro / Complete screens */
+/* intro / complete screens */
 .intro-screen, .complete-screen {
   max-width: 640px;
   margin: 50px auto;

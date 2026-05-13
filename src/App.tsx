@@ -21,7 +21,7 @@ export default function App() {
     debugging: 0,
   });
 
-  // Sort questions: easier ones first within each concept, then harder ones
+  // sort questions: easier ones first within each concept, then harder ones
   const ordered = [...questions].sort((a, b) => a.difficulty - b.difficulty);
 
   const current = ordered[currentIndex];

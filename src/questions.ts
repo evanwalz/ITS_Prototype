@@ -1,7 +1,6 @@
 import { Question } from './types';
 
 const questions: Question[] = [
-  // ── BASICS ──────────────────────────────────────────────────────────────────
   {
     id: 'b1',
     type: 'multiple-choice',
