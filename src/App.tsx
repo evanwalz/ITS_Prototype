@@ -5,12 +5,19 @@ import QuestionCard from './QuestionCard';
 import MasteryBar from './MasteryBar';
 import './App.css';
 
-const MASTERY_GAIN = 20;   // points gained for a correct answer
 const MASTERY_LOSS = 5;    // points lost for a wrong answer
 
 function clamp(n: number) {
   return Math.min(100, Math.max(0, n));
 }
+
+// calculate gain per question so each concept can reach 100%
+function masteryGain(concept: string) {
+  const count = questions.filter((q) => q.concept === concept).length;
+  return Math.round(100 / count);
+}
+
+type ConceptFilter = 'basics' | 'implementation' | 'debugging';
 
 export default function App() {
   const [screen, setScreen] = useState<AppScreen>('intro');
@@ -20,9 +27,26 @@ export default function App() {
     implementation: 0,
     debugging: 0,
   });
+  const [selected, setSelected] = useState<ConceptFilter[]>(['basics', 'implementation', 'debugging']);
 
-  // sort questions: easier ones first within each concept, then harder ones
-  const ordered = [...questions].sort((a, b) => a.difficulty - b.difficulty);
+  function toggleConcept(concept: ConceptFilter) {
+    setSelected((prev) =>
+      prev.includes(concept)
+        ? prev.length > 1 ? prev.filter((c) => c !== concept) : prev  // keep at least one
+        : [...prev, concept]
+    );
+  }
+
+  function buildOrdered(filter: ConceptFilter[]) {
+    return [...questions]
+      .filter((q) => filter.includes(q.concept as ConceptFilter))
+      .map((q) => ({ q, r: Math.random() }))
+      .sort((a, b) => a.q.difficulty - b.q.difficulty || a.r - b.r)
+      .map(({ q }) => q);
+  }
+
+  // shuffle once on mount, sorted by difficulty with randomness within each tier
+  const [ordered, setOrdered] = useState(() => buildOrdered(['basics', 'implementation', 'debugging']));
 
   const current = ordered[currentIndex];
 
@@ -30,7 +54,7 @@ export default function App() {
     const concept = current.concept;
     setMastery((prev) => ({
       ...prev,
-      [concept]: clamp(prev[concept] + (correct ? MASTERY_GAIN : -MASTERY_LOSS)),
+      [concept]: clamp(prev[concept] + (correct ? masteryGain(concept) : -MASTERY_LOSS)),
     }));
 
     if (currentIndex + 1 >= ordered.length) {
@@ -43,7 +67,15 @@ export default function App() {
   function restart() {
     setCurrentIndex(0);
     setMastery({ basics: 0, implementation: 0, debugging: 0 });
+    setSelected(['basics', 'implementation', 'debugging']);
     setScreen('intro');
+  }
+
+  function startQuiz() {
+    setOrdered(buildOrdered(selected));
+    setCurrentIndex(0);
+    setMastery({ basics: 0, implementation: 0, debugging: 0 });
+    setScreen('quiz');
   }
 
   const overallMastery = Math.round(
@@ -63,21 +95,22 @@ export default function App() {
           </p>
 
           <div className="intro-modules">
-            <div className="module-card">
-              <span className="module-icon">📖</span>
-              <strong>Basics</strong>
-              <p>When to use each input type</p>
-            </div>
-            <div className="module-card">
-              <span className="module-icon">⌨️</span>
-              <strong>Implementation</strong>
-              <p>Controlled components in React</p>
-            </div>
-            <div className="module-card">
-              <span className="module-icon">🐛</span>
-              <strong>Debugging</strong>
-              <p>Find and fix common mistakes</p>
-            </div>
+            {([
+              { key: 'basics', icon: '📖', label: 'Basics', desc: 'When to use each input type' },
+              { key: 'implementation', icon: '⌨️', label: 'Implementation', desc: 'Controlled components in React' },
+              { key: 'debugging', icon: '🐛', label: 'Debugging', desc: 'Find and fix common mistakes' },
+            ] as { key: ConceptFilter; icon: string; label: string; desc: string }[]).map(({ key, icon, label, desc }) => (
+              <div
+                key={key}
+                className={`module-card ${selected.includes(key) ? 'module-selected' : 'module-unselected'}`}
+                onClick={() => toggleConcept(key)}
+              >
+                <span className="module-icon">{icon}</span>
+                <strong>{label}</strong>
+                <p>{desc}</p>
+                <span className="module-check">{selected.includes(key) ? '✅' : '⬜'}</span>
+              </div>
+            ))}
           </div>
 
           <div className="intro-tips">
@@ -89,8 +122,8 @@ export default function App() {
             </ul>
           </div>
 
-          <button className="btn-primary btn-large" onClick={() => setScreen('quiz')}>
-            Start Learning →
+          <button className="btn-primary btn-large" onClick={startQuiz}>
+            Start Learning ({selected.length === 3 ? 'All modules' : `${selected.length} module${selected.length > 1 ? 's' : ''}`}) →
           </button>
         </div>
       </div>
@@ -138,7 +171,7 @@ export default function App() {
         <div className="sidebar-title">Form Inputs ITS</div>
         <MasteryBar mastery={mastery} />
         <div className="sidebar-note">
-          <p>+{MASTERY_GAIN}% for correct answers</p>
+          <p>+points for correct answers</p>
           <p>−{MASTERY_LOSS}% for wrong answers</p>
         </div>
       </aside>
